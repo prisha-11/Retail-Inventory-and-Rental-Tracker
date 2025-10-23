@@ -1,75 +1,21 @@
-# Sustainable-Closet-Tracker
-To create a Database Management System (DBMS) application that enables users to accurately catalog their clothing inventory, log the usage frequency of each item, and generate actionable recommendations that encourage users to wear less-used items, thereby promoting greater longevity of garments and supporting sustainable fashion practices.
-
-Sustainable Wardrobe Tracker: Promoting Conscious Consumption
-1. Project Overview
-The Sustainable Wardrobe Tracker is a Database Management System (DBMS) application designed to combat the negative effects of "fast fashion" by increasing the utility and lifespan of clothing items already owned by consumers.
-
-The core goal is to provide users with visibility and actionable insights into their clothing usage. By tracking item usage and identifying underutilized garments, the application encourages users to maximize the value of their existing wardrobe, ultimately promoting sustainable fashion practices and reducing textile waste.
-
-2. Key Features
-The application's functionality is built directly upon the robust data model to deliver the following features:
-
-Inventory Management
-Comprehensive Cataloging: Allows users to input detailed metadata for each item (purchase date, price, brand, color, material, category).
-
-Archiving: Users can mark items as archived (donated, sold, or discarded) to maintain an accurate active wardrobe count.
-
-Usage Tracking
-Efficient Wear Logging: A simple mechanism to log all items worn on a specific date in a single, time-stamped Wear Event.
-
-Usage Count Tracking: Automated tracking of the total number of times each item has been worn.
-
-Sustainability and Analytics
-Cost-Per-Wear (CPW) Calculation: Automatically calculates the CPW= 
-Usage Count
-Initial Price
-​
-  for every item, providing a tangible metric of item value and sustainability.
-
-Recommendation Engine: Generates prioritized lists of underutilized items (e.g., unworn for 90+ days), encouraging users to wear them.
-
-Usage Dashboard: Visual display of key sustainability metrics, such as unique items worn, average CPW across the wardrobe, and total inventory value.
-
-3. Data Model Architecture Overview
-The application utilizes a relational database structure designed to handle the critical Many-to-Many relationship between individual Items and Wear Events.
-
-Core Entities:
-USER: The primary account, responsible for data ownership.
-
-CATEGORY: A lookup table for organizing the wardrobe (e.g., Tops, Bottoms).
-
-ITEM: The central entity, representing a single piece of clothing with its purchase details.
-
-WEAR_EVENT: Represents a specific date/occasion when an outfit was worn.
-
-ITEM_WEAR_LOG: The junction table that links specific ITEMs to specific WEAR_EVENTs, serving as the source of truth for all usage analytics.
-
-Key Relationship
-The analytical power of the application relies on the ITEM_WEAR_LOG table, which resolves the M:M relationship, allowing for complex queries to calculate usage frequency and duration since last worn.
-
-4. Database Schema Reference (MySQL)
-The detailed physical schema, including data types, primary keys, foreign keys, and unique constraints, is defined in the wardrobe_schema.sql file.
-
-Primary Tables and Relationships:
-
-<img width="451" height="267" alt="image" src="https://github.com/user-attachments/assets/72b03417-d09d-4869-a31b-c0a13d4052df" />
-
-5. Development and Setup
-Prerequisites
-[Database System] (e.g., MySQL, PostgreSQL, or Firestore implementation for web apps)
-
-[Backend Framework] (e.g., Node.js/Express, Python/Django)
-
-[Frontend Framework] (e.g., React, Angular, Vue.js)
-
-Installation Steps (Placeholder)
-Clone the repository: git clone [repository-url]
-
-Set up the database connection in config.js or equivalent.
-
-Run the schema creation script: mysql -u user -p < wardrobe_schema.sql
-
-Install dependencies: npm install (or equivalent)
-
-Start the application: npm start
+Problem Statement
+Retail clothing shop owners require an integrated inventory and rental management system to accurately track unique garment stock levels, categorize items by designer and clothing type, and monitor the current status, customer, and expected return dates for all rented-out items, thereby minimizing loss, optimizing asset utilization, and providing comprehensive financial reporting for both rental and retail segments.
+Detailed Problem Description: Integrated Retail and Rental Management
+The existing methods (often spreadsheets or simple POS systems) used by shop owners fail to handle the dual life cycle of garments—sales and rentals—leading to critical gaps in organization, accounting, and asset recovery.
+1. Core Inventory Management and Categorization Challenges
+The foundation of the problem lies in the difficulty of maintaining a structured inventory:
+Organizational Inaccuracy: Shop owners struggle to maintain a clean database that correctly enforces relationships between Designer (Brand) and Clothing Type (e.g., Trousers, Blouse). Manual systems make querying difficult, preventing the owner from quickly isolating, for example, "all size 8 evening dresses by Designer X."
+Inaccurate Stock Levels: With rentals, stock can be In Stock, Rented Out, or In Cleaning. This complexity requires a system that tracks the specific physical Status of each unique item, not just a static quantity, leading to frequent discrepancies between physical count and system records.
+Profit Segmentation: Current tools do not easily allow the owner to segment Profit made from Retail Sales versus Rentals, making performance analysis difficult.
+2. The Dynamic Challenge of Rental Tracking and Returns
+The rental component introduces several layers of dynamic tracking and risk:
+Asset Status and Availability: The system must track the item's current status accurately: Available, Rented Out, Maintenance/Cleaning, or Sold. This allows for real-time reporting on which items are available for immediate sale or rent.
+Returns Management (Garments Due): Shop owners require a centralized view to track exactly how many garments are due to return on a given day (based on the Expected Return Date) and how many still remain to be returned (items past their due date where the Actual Return Date is null). This is essential for stock planning and imposing late fees.
+Customer and Timeline Accountability: The system must record a binding link between the specific Inventory Item, the Customer, the Rental Date, and the Expected Return Date. Failure to track this accurately results in lost revenue and potential asset loss.
+Restock Prediction: The system must automatically calculate when currently unavailable rented items will become restocked again (i.e., available for the next customer) based on the expected return date plus cleaning time.
+3. Impact and Need for an Integrated Solution
+The overall problem is that the shop owner cannot treat their inventory as a manageable, fluid resource. They need a single, integrated platform that enables them to:
+Generate a Full Sales Dashboard showing profit breakdown by retail and rental segments.
+Manage the Returns Pipeline by tracking due dates and outstanding garments.
+Predict future inventory availability to allow for better sales and rental forecasting.
+The solution must be a robust relational database that links the static inventory details to the dynamic transactional and returns data.
