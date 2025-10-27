@@ -1,0 +1,113 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  background-color: #f7f9fb;
+  color: #333;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #1f2937;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  padding: 10px 15px;
+  margin: 8px 0;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active {
+  background-color: #374151;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+header h1 {
+  font-size: 28px;
+  margin-bottom: 25px;
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  font-size: 16px;
+  color: #555;
+}
+
+.card p {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.data-section {
+  display: flex;
+  margin-top: 30px;
+  gap: 20px;
+}
+
+.inventory-status, .returns-pipeline {
+  background: white;
+  flex: 1;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.bar {
+  height: 10px;
+  background-color: #3b82f6;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.overdue { color: red; }
+.due-today { color: orange; }
+.due-tomorrow { color: #3b82f6; }

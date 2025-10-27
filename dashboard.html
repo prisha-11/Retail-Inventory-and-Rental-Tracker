@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retail & Rental Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>R&R Manager</h2>
+    <ul>
+      <li class="active">Dashboard</li>
+      <li>Inventory</li>
+      <li>Rentals</li>
+      <li>Returns</li>
+      <li>Reports</li>
+      <li>Settings</li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>Dashboard</h1>
+    </header>
+
+    <section class="cards">
+      <div class="card">
+        <h3>Total Sales</h3>
+        <p>$25,400</p>
+        <canvas id="totalSalesChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Retail Sales</h3>
+        <p>$18,200</p>
+        <canvas id="retailChart"></canvas>
+      </div>
+      <div class="card">
+        <h3>Rental Sales</h3>
+        <p>$7,200</p>
+        <canvas id="rentalChart"></canvas>
+      </div>
+    </section>
+
+    <section class="data-section">
+      <div class="inventory-status">
+        <h3>Inventory Status</h3>
+        <ul>
+          <li>In Stock <div class="bar blue" style="width:90%"></div></li>
+          <li>Rented Out <div class="bar blue" style="width:70%"></div></li>
+          <li>In Cleaning <div class="bar blue" style="width:50%"></div></li>
+          <li>Sold <div class="bar blue" style="width:30%"></div></li>
+        </ul>
+      </div>
+
+      <div class="returns-pipeline">
+        <h3>Returns Pipeline</h3>
+        <table>
+          <tr><th>Garment</th><th>Customer</th><th>Due Date</th><th>Status</th></tr>
+          <tr><td>Dress</td><td>Ali Smith</td><td>May 1, 2024</td><td class="overdue">Overdue</td></tr>
+          <tr><td>Blouse</td><td>John Doe</td><td>May 2, 2024</td><td class="due-today">Due Today</td></tr>
+          <tr><td>Pants</td><td>Jane Wilson</td><td>May 3, 2024</td><td class="due-tomorrow">Due Tomorrow</td></tr>
+          <tr><td>Jacket</td><td>Emma Johnson</td><td>May 4, 2024</td><td>Pending</td></tr>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
