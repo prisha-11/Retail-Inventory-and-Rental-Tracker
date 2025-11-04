@@ -1,0 +1,183 @@
+
+-- Integrated Retail and Rental Management System
+
+
+-- Create database
+CREATE DATABASE IF NOT EXISTS inventory_management;
+USE inventory_management;
+
+-- ================================================
+-- USERS TABLE (Customers + Admins + Staff)
+-- ================================================
+CREATE TABLE IF NOT EXISTS users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('admin','staff','customer') DEFAULT 'customer',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ================================================
+-- DESIGNERS (Brands)
+-- ================================================
+CREATE TABLE IF NOT EXISTS designers (
+  designer_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL UNIQUE
+);
+
+-- ================================================
+-- CLOTHING TYPES
+-- ================================================
+CREATE TABLE IF NOT EXISTS clothing_types (
+  clothing_type_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- ================================================
+-- GARMENTS TABLE (Each unique item)
+-- ================================================
+CREATE TABLE IF NOT EXISTS garments (
+  garment_id INT AUTO_INCREMENT PRIMARY KEY,
+  sku VARCHAR(50) NOT NULL,
+  designer_id INT NOT NULL,
+  clothing_type_id INT NOT NULL,
+  size VARCHAR(50),
+  color VARCHAR(50),
+  cost_price DECIMAL(10,2) DEFAULT 0.00,
+  retail_price DECIMAL(10,2) DEFAULT 0.00,
+  status ENUM('available','rented','in_cleaning','sold','maintenance') DEFAULT 'available',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_designer FOREIGN KEY (designer_id) REFERENCES designers(designer_id) ON DELETE RESTRICT,
+  CONSTRAINT fk_clothing_type FOREIGN KEY (clothing_type_id) REFERENCES clothing_types(clothing_type_id) ON DELETE RESTRICT,
+  UNIQUE (sku, garment_id)
+);
+
+-- ================================================
+-- SALES TABLE (Retail Sales)
+-- ================================================
+CREATE TABLE IF NOT EXISTS sales (
+  sale_id INT AUTO_INCREMENT PRIMARY KEY,
+  garment_id INT NOT NULL,
+  sold_to_user_id INT NULL,
+  sale_price DECIMAL(10,2) NOT NULL,
+  sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_sale_garment FOREIGN KEY (garment_id) REFERENCES garments(garment_id)
+);
+
+-- ================================================
+-- RENTALS TABLE (Header)
+-- ================================================
+CREATE TABLE IF NOT EXISTS rentals (
+  rental_id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT NOT NULL,
+  rental_date DATE NOT NULL,
+  expected_return_date DATE NOT NULL,
+  actual_return_date DATE NULL,
+  total_amount DECIMAL(10,2) DEFAULT 0.00,
+  status ENUM('ongoing','completed','overdue','cancelled') DEFAULT 'ongoing',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id) REFERENCES users(user_id)
+);
+
+-- ================================================
+-- RENTAL ITEMS TABLE (Each Garment in a Rental)
+-- ================================================
+CREATE TABLE IF NOT EXISTS rental_items (
+  rental_item_id INT AUTO_INCREMENT PRIMARY KEY,
+  rental_id INT NOT NULL,
+  garment_id INT NOT NULL,
+  rent_price DECIMAL(10,2) DEFAULT 0.00,
+  cleaning_days INT DEFAULT 1,
+  returned_date DATE NULL,
+  late_fee DECIMAL(10,2) DEFAULT 0.00,
+  CONSTRAINT fk_rental FOREIGN KEY (rental_id) REFERENCES rentals(rental_id) ON DELETE CASCADE,
+  CONSTRAINT fk_rental_garment FOREIGN KEY (garment_id) REFERENCES garments(garment_id)
+);
+
+-- ================================================
+-- INDEXES
+-- ================================================
+CREATE INDEX idx_garment_status ON garments(status);
+CREATE INDEX idx_rental_expected_return ON rentals(expected_return_date);
+CREATE INDEX idx_rental_status ON rentals(status);
+
+-- ================================================
+-- SAMPLE DATA
+-- ================================================
+INSERT IGNORE INTO designers (name) VALUES 
+('Designer A'),
+('Designer B'),
+('Designer C');
+
+INSERT IGNORE INTO clothing_types (name) VALUES 
+('Evening Dress'),
+('Trousers'),
+('Blouse'),
+('Jacket');
+
+-- Dummy admin user (replace hash later with bcrypt hash)
+INSERT IGNORE INTO users (name, email, password_hash, role)
+VALUES ('Admin', 'admin@example.com', '$2b$12$dummy', 'admin');
+
+-- Sample garments
+INSERT INTO garments (sku, designer_id, clothing_type_id, size, color, cost_price, retail_price)
+VALUES
+('SKU-ED-001', 1, 1, '8', 'Black', 1000.00, 2500.00),
+('SKU-TR-001', 2, 2, 'M', 'Blue', 500.00, 1200.00),
+('SKU-BL-001', 1, 3, 'S', 'Red', 300.00, 700.00),
+('SKU-JK-001', 3, 4, 'L', 'Green', 800.00, 2000.00);
+
+-- ================================================
+-- DASHBOARD VIEWS
+-- ================================================
+
+-- Profit Breakdown (Retail vs Rental)
+CREATE OR REPLACE VIEW v_profit_breakdown AS
+SELECT
+  'retail' AS segment,
+  IFNULL(SUM(s.sale_price - g.cost_price), 0) AS profit
+FROM sales s
+JOIN garments g ON s.garment_id = g.garment_id
+UNION ALL
+SELECT
+  'rental' AS segment,
+  IFNULL(SUM(ri.rent_price - g.cost_price * 0.1), 0) AS profit
+FROM rental_items ri
+JOIN garments g ON ri.garment_id = g.garment_id;
+
+-- Items Due Today
+CREATE OR REPLACE VIEW v_due_today AS
+SELECT 
+  r.rental_id,
+  r.customer_id,
+  r.expected_return_date,
+  ri.garment_id,
+  ri.returned_date
+FROM rentals r
+JOIN rental_items ri ON r.rental_id = ri.rental_id
+WHERE r.expected_return_date = CURDATE() 
+AND ri.returned_date IS NULL;
+
+-- Overdue Items
+CREATE OR REPLACE VIEW v_overdue AS
+SELECT 
+  r.rental_id,
+  r.customer_id,
+  ri.garment_id,
+  r.expected_return_date
+FROM rentals r
+JOIN rental_items ri ON r.rental_id = ri.rental_id
+WHERE r.expected_return_date < CURDATE() 
+AND ri.returned_date IS NULL;
+
+-- ================================================
+-- VERIFICATION QUERIES (Optional)
+-- ================================================
+-- SELECT * FROM users;
+-- SELECT * FROM garments;
+-- SELECT * FROM v_profit_breakdown;
+-- SELECT * FROM v_due_today;
+-- SELECT * FROM v_overdue;
+-- ================================================
+
